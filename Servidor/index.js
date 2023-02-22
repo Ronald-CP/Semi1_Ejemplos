@@ -1,10 +1,11 @@
+require('dotenv').config()
 var express = require('express')
 var bodyParser = require('body-parser')
+const mysql = require('mysql')
 
 var app = express()
 
 const cors = require('cors')
-
 var corsOptions = { origin: true, optionsSuccessStatus: 200 }
 app.use(cors(corsOptions))
 app.use(bodyParser.json({ limit: '10mb', extended: true }))
@@ -14,8 +15,17 @@ var port = 4000
 app.listen(port)
 console.log('Escuchando en el puerto', port)
 
+// se manda a llamar las credenciales de Mysql
+const db_credentials = require('./db_creds')
+var conn = mysql.createPool(db_credentials)
+
 //Se inicializa el sdk para menejar los servicios de AWS
+const aws_keys = require('./aws_keys')
 var AWS = require('aws-sdk')
+
+//instanciamos los servicios a utilizar con sus respectivos accesos.
+const s3 = new AWS.S3(aws_keys.s3)
+//const dynamoDB = new AWS.DynamoDB(aws_keys.dynamodb)
 
 //*********************************************ALMACENAMIENTO****************************************************
 // ruta que se usa para subir una foto
