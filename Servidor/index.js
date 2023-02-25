@@ -1,4 +1,5 @@
 require('dotenv').config()
+
 var express = require('express')
 var bodyParser = require('body-parser')
 const mysql = require('mysql')
@@ -25,7 +26,7 @@ var AWS = require('aws-sdk')
 
 //instanciamos los servicios a utilizar con sus respectivos accesos.
 const s3 = new AWS.S3(aws_keys.s3)
-//const dynamoDB = new AWS.DynamoDB(aws_keys.dynamodb)
+const dynamoDB = new AWS.DynamoDB(aws_keys.dynamodb)
 
 //*********************************************ALMACENAMIENTO****************************************************
 // ruta que se usa para subir una foto
@@ -80,6 +81,116 @@ app.post('/obtenerfoto', function (req, res) {
     } else {
       var dataBase64 = Buffer.from(data.Body).toString('base64') //resgresar de byte a base
       res.json({ mensaje: dataBase64 })
+    }
+  })
+})
+
+/*************************** DYNAMO DB  ************************** */
+
+//subir foto y guardar en dynamo
+app.post('/saveImageDb', function (req, res) {
+  let body = req.body
+
+  let name = body.name // nombre de la imagen
+  let image = body.base64 // imagen en base64
+  let extension = body.extension // extension de la imagen
+
+  let decodedImage = Buffer.from(image, 'base64') // Pasamos de base 64 a binario para guardarlo en bucket
+  let filename = name + '.' + extension // cadena de nombre de la imagen
+
+  let bucketname = 'semi1-tabladynamo' // nombre del bucket
+  let folder = 'fotos/' // carpeta donde se guardara la imagen
+  let path = `${folder}${filename}` // /fotos/imagen.jpg
+
+  let params = {
+    Bucket: bucketname,
+    Key: path,
+    Body: decodedImage,
+    ACL: 'public-read', // ACL -> LE APLICA LA POLITICA AL OBJETO QUE SE ESTA GUARDANDO, politica de solo lectura y publica
+  }
+
+  s3.upload(params, function sync(err, data) {
+    if (err) {
+      console.log(err)
+      res.json({ mensaje: 'Error al subir la imagen', error: err, status: false })
+    } else {
+      console.log('Subido exitosamente a S3 ' + data.Location)
+
+      dynamoDB.putItem(
+        {
+          TableName: 'tabladynamo', // el nombre de la tabla de dynamoDB
+          Item: {
+            // Atributos de nuestra tabla
+            id: { S: '2' }, // el id de la imagen
+            name: { S: name },
+            location: { S: data.Location },
+          },
+        },
+        function (err, data) {
+          if (err) {
+            console.log(err)
+            res.json({ mensaje: 'Error al subir la imagen', error: err, status: false })
+          } else {
+            console.log(data)
+            res.json({ mensaje: 'Imagen subida exitosamente a Dynamo', status: true })
+          }
+        },
+      )
+    }
+  })
+})
+
+app.get('/getImageDb', function (req, res) {
+  let params = {
+    TableName: 'tabladynamo',
+    Key: {
+      id: { S: '1' },
+    },
+  }
+
+  dynamoDB.getItem(params, function (err, data) {
+    if (err) {
+      console.log(err)
+      res.json({ mensaje: 'Error al obtener la imagen', error: err, status: false })
+    } else {
+      console.log(data)
+      res.json({
+        mensaje: 'Imagen obtenida exitosamente de Dynamo',
+        data: data,
+        status: true,
+      })
+    }
+  })
+})
+
+//*********************************************RDS******************************************************
+
+// INSERT BASE DE DATOS
+
+app.post('/insertar', function (req, res) {
+  let body = req.body
+  conn.query(
+    'INSERT INTO `ejemplo` (`id`, `nombre`) VALUES (?, ?)',
+    [body.id, body.nombre],
+    function (err, result) {
+      if (err) {
+        console.log(err)
+        res.json({ mensaje: 'Error al insertar', error: err, status: false })
+      } else {
+        res.json({ mensaje: 'Insertado exitosamente', status: true })
+      }
+    },
+  )
+})
+
+// OBTENER BASE DE DATOS
+app.get('/obtener', function (req, res) {
+  conn.query('SELECT * FROM ejemplo', function (err, result) {
+    if (err) {
+      console.log(err)
+      res.json({ mensaje: 'Error al obtener', error: err, status: false })
+    } else {
+      res.json({ mensaje: 'Obtenido exitosamente', data: result, status: true })
     }
   })
 })
