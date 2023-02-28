@@ -1,15 +1,13 @@
 let aws_keys = {
   s3: {
-    region: '',
-    accessKeyId: '',
-    secretAccessKey: '',
-    //apiVersion: '2006-03-01',
+    region: 'us-east-1',
+    accessKeyId: 'AKIA4MQPRAC6Q5Y5W2VC',
+    secretAccessKey: '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',
   },
   dynamodb: {
-    //apiVersion: '2012-08-10',
-    region: '',
-    accessKeyId: '',
-    secretAccessKey: '',
+    region: 'us-east-2',
+    accessKeyId: 'AKIA4MQPRAC62R7QZSCC',
+    secretAccessKey: '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',
   },
   rekognition: {
     region: '',

@@ -1,3 +1,5 @@
+const mysql = require('mysql')
+
 let db_credentials = {
   host: process.env.HOST,
   port: process.env.PORT,
@@ -5,4 +7,7 @@ let db_credentials = {
   password: process.env.PASSWORD,
   database: process.env.DATABASE,
 }
-module.exports = db_credentials
+
+var conn = mysql.createPool(db_credentials)
+
+module.exports = conn
