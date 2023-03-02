@@ -10,7 +10,7 @@ var rekognition = require('./routes/rekognition.routes.js')
 var app = express()
 
 // MIDDLEWARES
-app.set('port', process.env.NODE_PORT_TEAM || 5000)
+app.set('port', 4000)
 const cors = require('cors')
 var corsOptions = { origin: true, optionsSuccessStatus: 200 }
 app.use(cors(corsOptions))

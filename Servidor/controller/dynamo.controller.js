@@ -61,9 +61,9 @@ var saveImageDynamo = async (req, res) => {
 
 var getImageDynamo = async (req, res) => {
   let params = {
-    TableName: 'tabladynamo',
+    TableName: 'testDB',
     Key: {
-      id: { S: '1' },
+      id: { S: '3' },
     },
   }
 

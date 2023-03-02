@@ -4,5 +4,5 @@ const { getImageDynamo, saveImageDynamo } = require('../controller/dynamo.contro
 const router = Router()
 
 router.post('/saveImageDb', saveImageDynamo)
-router.post('/getImageDb', getImageDynamo)
+router.get('/getImageDb', getImageDynamo)
 module.exports = router

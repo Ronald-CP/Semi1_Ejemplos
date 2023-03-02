@@ -10,9 +10,9 @@ let aws_keys = {
     secretAccessKey: 'Y6alGAqTtZDvyTiUhFowPZNHDlTO/6+1E//sI0t9',
   },
   rekognition: {
-    region: '',
-    accessKeyId: '',
-    secretAccessKey: '',
+    region: 'us-east-1',
+    accessKeyId: 'AKIA4MQPRAC6X5VVNR62',
+    secretAccessKey: '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',
   },
   translate: {
     region: '',
