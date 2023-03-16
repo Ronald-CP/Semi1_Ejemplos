@@ -6,7 +6,8 @@ var rds = require('./routes/rds.routes.js')
 var dynamodb = require('./routes/dynamo.routes.js')
 var s3 = require('./routes/s3.routes.js')
 var rekognition = require('./routes/rekognition.routes.js')
-
+var translate = require('./routes/translate.routes.js')
+var cognito = require('./routes/cognito.routes.js')
 var app = express()
 
 // MIDDLEWARES
@@ -21,5 +22,7 @@ app.use('/rds', rds)
 app.use('/s3', s3)
 app.use('/dynamodb', dynamodb)
 app.use('/rekognition', rekognition)
+app.use('/translate', translate)
+app.use('/cognito', cognito)
 
 module.exports = app
