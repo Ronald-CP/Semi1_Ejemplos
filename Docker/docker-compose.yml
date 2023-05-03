@@ -1,0 +1,18 @@
+version: '3'
+
+services:
+  apypython:
+    container_name: apypython
+    build: ./Servidor
+    expose:
+      - '5000'
+    ports:
+      - '5000:5000'
+
+  apypython2:
+    container_name: apypython2
+    build: ./Servidor2
+    expose:
+      - '4000'
+    ports:
+      - '4000:5000'

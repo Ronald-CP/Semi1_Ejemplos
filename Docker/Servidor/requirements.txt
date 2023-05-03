@@ -1,0 +1,5 @@
+flask
+Flask-Pymongo
+pymongo
+boto3
+pytz
